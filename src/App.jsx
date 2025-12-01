@@ -39,7 +39,7 @@ function App() {
         <Route path="/allBooks" element={<AllBooks />} />
         <Route path="/careers" element={<Careers />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/viewBook" element={<ViewBook />} />
+        <Route path="/viewBook/:id" element={<ViewBook />} />
         {/* admin */}
         <Route path="/adminHome" element={<AdminHome />} />
         <Route path="/adminBooks" element={<AdminBooks />} />

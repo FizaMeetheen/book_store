@@ -25,6 +25,23 @@ export const addBookAPI = async(reqBody,reqHeader)=>{
 }
 
 //get all books
-export const getAllBooksAPI = async(reqHeader) => {
-    return await commonAPI("GET",`${serverURL}/All-Books`,"",reqHeader)
+export const getAllBooksAPI = async(searchKey,reqHeader) => {
+    return await commonAPI("GET",`${serverURL}/All-books?search=${searchKey}`,"",reqHeader)
 }
+
+//get a book
+export const getBookAPI = async(id,reqHeader) => {
+    return await commonAPI("GET",`${serverURL}/viewBook/${id}`,"",reqHeader)
+}
+
+//status of book
+export const getBookStatusAPI = async(reqHeader) => {
+    return await commonAPI("GET",`${serverURL}/userbooks`,"",reqHeader)
+} 
+
+//delete book
+export const deleteUserAddedBookAPI = async(id)=>{
+    return await commonAPI("DELETE",`${serverURL}/delete-book/${id}`)
+}
+
+
