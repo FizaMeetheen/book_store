@@ -44,4 +44,9 @@ export const deleteUserAddedBookAPI = async(id)=>{
     return await commonAPI("DELETE",`${serverURL}/delete-book/${id}`)
 }
 
+// get user bought books
+export const getPurchaseHistoryAPI = async(reqHeader)=>{
+    return await commonAPI("GET",`${serverURL}/purchase-history`,"",reqHeader)
+}
+
 

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Header from '../../common/components/Header'
 import Footer from '../../common/components/Footer'
 import { MdVerified } from 'react-icons/md'
-import { FaEdit } from 'react-icons/fa'
-import { addBookAPI, deleteUserAddedBookAPI, getBookStatusAPI } from '../../services/allAPI'
+import { addBookAPI, deleteUserAddedBookAPI, getBookStatusAPI, getPurchaseHistoryAPI } from '../../services/allAPI'
 import { toast } from 'react-toastify'
+import EditProfile from '../components/EditProfile'
 
 function Profile() {
 
@@ -31,6 +31,7 @@ function Profile() {
   const [username, setUsername] = useState("")
   const [deleteBookStatus, setDeleteBookStatus] = useState(false)
   const [bookStatusDetails, setBookStatusDetails] = useState("")
+  const [boughtBooks, setBoughtBooks] = useState("")
 
 
   const handleReset = () => {
@@ -162,11 +163,30 @@ function Profile() {
     }
   }
 
+
+
+  const getPurchaseHistory = async () => {
+    try {
+      //reqHeader
+      const reqHeader = {
+        "Authorization": `Bearer ${token}`
+      }
+      const result = await getPurchaseHistoryAPI(reqHeader)
+      console.log(result);
+      setBoughtBooks(result.data)
+    }
+    catch (error) {
+      console.log(error);
+
+    }
+  }
+
   useEffect(() => {
     if (bookStatus == true) {
       handleUserBook()
     }
-  }, [bookStatus, deleteBookStatus])
+    getPurchaseHistory()
+  }, [bookStatus, deleteBookStatus, purchaseStatus])
 
   return (
     <>
@@ -181,7 +201,7 @@ function Profile() {
           <MdVerified className='text-blue-500 ms-3 text-xl' />
         </div>
         <div>
-          <button className='flex px-4 py-3 font-bold border border-blue-200 text-blue-800 '><FaEdit className='mt-1 me-2' />Edit</button>
+          <EditProfile/>
         </div>
       </div>
       <p className='text-justify p-10'>Lorem ipsum dolor sit, amet consectetur adipisicing elit.
@@ -347,10 +367,47 @@ function Profile() {
 
 
       {/* Sell Book */}
-      {purchaseStatus &&
+      {purchaseStatus && (
         <div>
-          Purchase History
-        </div>}
+          <div className="p-10 my-20 shadow rounded">
+
+            {boughtBooks?.length > 0 ? (
+              boughtBooks.map((item) => (
+                <div className="bg-gray-400 p-5 rounded mt-4">
+                  <div className="md:grid grid-cols-[3fr_1fr]">
+                    <div className="px-4">
+                      <h1 className="text-2xl">{item.title}</h1>
+                      <h2>{item.author}</h2>
+                      <h3 className="text-blue-500">{item.price}</h3>
+                      <p>{item.abstract}</p>
+                    </div>
+
+                    <div className="px-4 mt-4 md:mt-4">
+                      <img
+                        src={item.ImageUrl}
+                        alt="no image"
+                        className="w-full"
+                        style={{ height: "250px" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex justify-center items-center flex-col">
+                <img
+                  src="https://i.pinimg.com/originals/b4/13/34/b41334a036d6796c281a6e5cbb36e4b5.gif"
+                  alt="no image"
+                  style={{ width: "200px", height: "200px" }}
+                />
+                <p className="text-red-600 text-2xl">No Book Added Yet.</p>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
+
 
       <Footer />
     </>
