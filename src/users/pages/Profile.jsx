@@ -182,11 +182,12 @@ function Profile() {
   }
 
   useEffect(() => {
+    if(!token) return;
     if (bookStatus == true) {
       handleUserBook()
     }
     getPurchaseHistory()
-  }, [bookStatus, deleteBookStatus, purchaseStatus])
+  }, [token,bookStatus, deleteBookStatus, purchaseStatus])
 
   return (
     <>

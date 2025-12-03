@@ -52,7 +52,7 @@ function Header() {
                             </button>
                             {dropdownStatus && <div className='absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg'>
                                 <Link to={'/profile'} className='block px-4 py-2 text-sm text-gray-700'>Profile</Link>
-                                <button className='block px-4 py-2 text-sm text-gray-700'>Logout</button>
+                               <Link to={"/login"}> <button className='block px-4 py-2 text-sm text-gray-700'>Logout</button></Link>
                             </div>}
                         </div>}
                 </div>

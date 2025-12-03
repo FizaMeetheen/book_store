@@ -49,4 +49,9 @@ export const getPurchaseHistoryAPI = async(reqHeader)=>{
     return await commonAPI("GET",`${serverURL}/purchase-history`,"",reqHeader)
 }
 
+//edit-profile
+export const editProfileAPI = async(reqBody,reqHeader) => {
+    return await commonAPI("PUT",`${serverURL}/edit-profile`,reqBody,reqHeader)
+}
+
 
