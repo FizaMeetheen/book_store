@@ -1,18 +1,30 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaGraduationCap, FaHome } from 'react-icons/fa'
 import { IoMdSettings } from 'react-icons/io'
 import { PiBooks } from 'react-icons/pi'
 import { Link } from 'react-router-dom'
+import serverURL from '../../services/serverURL'
+import { adminProfileUpdate } from '../../context/ContextShare'
 
 function AdminSidebar() {
+
+    const [adminName , setAdminName] = useState("")
+    const [existingProfile,setExistingProfile] = useState("")
+    const {updateAdminProfileStatus} = useContext(adminProfileUpdate)
+
+    useEffect(()=>{
+        setAdminName(JSON.parse(sessionStorage.getItem("exisitingUser")).username)
+        setExistingProfile(JSON.parse(sessionStorage.getItem("exisitingUser")).profile)
+    },[updateAdminProfileStatus])
+
   return (
     <>
     <div className='bg-gray-200 w-full md:min-h-screen flex items-center flex-col'>
         <div className='my-10'>
-            <img src="https://st.depositphotos.com/1537427/3571/v/450/depositphotos_35716051-stock-illustration-user-icon-vector.jpg" alt="profile log" style={{width:"170px" , height:"170px" , borderRadius:"50%"}} />
+            <img src={existingProfile == "" ?  "https://st.depositphotos.com/1537427/3571/v/450/depositphotos_35716051-stock-illustration-user-icon-vector.jpg" :`${serverURL}/imgUploads/${existingProfile}` } alt="profile log" style={{width:"170px" , height:"170px" , borderRadius:"50%"}} />
         </div>
         <div>
-            <h1 className='text-2xl mb-10'>Fiza Meetheen D M</h1>
+            <h1 className='text-2xl mb-10'>{adminName}</h1>
             <div className='mb-10'>
                 <div className='mb-4 flex '>
                     <input type="radio" id='home' readOnly  />

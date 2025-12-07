@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../../common/components/Header'
 import Footer from '../../common/components/Footer'
 import { MdVerified } from 'react-icons/md'
 import { addBookAPI, deleteUserAddedBookAPI, getBookStatusAPI, getPurchaseHistoryAPI } from '../../services/allAPI'
 import { toast } from 'react-toastify'
 import EditProfile from '../components/EditProfile'
+import { userProfileUpdate } from '../../context/ContextShare'
 
 function Profile() {
 
@@ -33,6 +34,7 @@ function Profile() {
   const [bookStatusDetails, setBookStatusDetails] = useState("")
   const [boughtBooks, setBoughtBooks] = useState("")
 
+  const {updateProfileStatus} = useContext(userProfileUpdate)
 
   const handleReset = () => {
     setBookDetails({
@@ -127,7 +129,7 @@ function Profile() {
       const name = JSON.parse(sessionStorage.getItem("exisitingUser"))
       setUsername(name.username)
     }
-  }, [])
+  }, [updateProfileStatus])
 
   const handleUserBook = async () => {
     const reqHeader = {

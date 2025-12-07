@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaFacebookSquare, FaInstagramSquare, FaRegUser } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
 import { Link } from 'react-router-dom'
+import { userProfileUpdate } from '../../context/ContextShare'
 
 function Header() {
 
@@ -10,6 +11,8 @@ function Header() {
     const [dropdownStatus, setDropdownStatus] = useState(false)
     const [token, setToken] = useState("")
     const [username, setUsername] = useState("")
+
+    const {updateProfileStatus} = useContext(userProfileUpdate)
 
 
     useEffect(() => {
@@ -20,7 +23,7 @@ function Header() {
             const name = JSON.parse(sessionStorage.getItem("exisitingUser"))
             setUsername(name.username)
         }
-    }, [])
+    }, [updateProfileStatus])
 
     return (
         <>

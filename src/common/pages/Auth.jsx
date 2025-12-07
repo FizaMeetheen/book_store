@@ -58,7 +58,7 @@ function Auth({ register }) {
 
   //login
   const handleLogin = async () => {
-    const { email, password } = userDetails 
+    const { email, password } = userDetails
     if (!email || !password) {
       toast.info("FIll the required fields..")
     }
@@ -66,21 +66,27 @@ function Auth({ register }) {
       const result = await loginAPI(userDetails)
       console.log(result);
       if (result.status == 200) {
-        sessionStorage.setItem("exisitingUser",JSON.stringify(result.data.exisitingUser))
-        sessionStorage.setItem("token",result.data.token)
+        sessionStorage.setItem("exisitingUser", JSON.stringify(result.data.exisitingUser))
+        sessionStorage.setItem("token", result.data.token)
         toast.success("Login Successfully")
+        if (result.data.exisitingUser.role == "admin") {
+          navigate('/adminHome')
+        }
+        else {
+          navigate('/')
+        }
         setUserDetails({
           email: "",
           password: ""
         })
-        navigate('/')
+
       }
       else if (result.status == 404) {
         toast.warning(result.response.data)
       }
       else if (result.status == 401) {
         toast.warning(result.response.data)
-         setUserDetails({
+        setUserDetails({
           email: "",
           password: ""
         })

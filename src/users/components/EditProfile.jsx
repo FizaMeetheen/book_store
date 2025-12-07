@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 import serverURL from '../../services/serverURL'
 import { toast } from 'react-toastify'
 import { editProfileAPI } from '../../services/allAPI'
+import { userProfileUpdate } from '../../context/ContextShare'
 
 function EditProfile() {
     const [offCanvas, setOffCanvas] = useState(false)
@@ -18,6 +19,8 @@ function EditProfile() {
     const [existingProfile, setExistingProfile] = useState("")
     const [preview, setPreview] = useState("")
 
+    const {setUpdateProfileStatus} = useContext(userProfileUpdate)
+
 
     // console.log(userDetails);
     // console.log(existingProfile);
@@ -29,53 +32,78 @@ function EditProfile() {
     }
 
     const handleReset = () => {
-        if (sessionStorage.getItem("token")) {
-            setToken(sessionStorage.getItem("token"))
-            const user = JSON.parse(sessionStorage.getItem("exisitingUser"))
-            setUserDetails({ username: user.username, password: user.password, confirmPassword: user.password, bio: user.bio })
-            setExistingProfile(user.profile)
-        }
+        const user = JSON.parse(sessionStorage.getItem("exisitingUser"))
+        setUserDetails({ username: user.username, password: user.password, confirmPassword: user.password, bio: user.bio })
+        setExistingProfile(user.profile)
+        setPreview("")
     }
 
     const handleUpdate = async () => {
         const { username, password, confirmPassword, bio, profile } = userDetails
-        if (password === confirmPassword) {
-
-            //reqHeader
-            const reqHeader = {
-                "Authorization": `Bearer ${token}`
-            }
-            const reqBody = new FormData() //bcz of req.file only work if u send form data
-            for (let key in userDetails) {
-                if (key != "profile") {
-                    reqBody.append(key, userDetails[key]) //apend everthyng except profile
-                }
-            }
-            reqBody.append("profile", profile)
-
-            try {
-                const result = await editProfileAPI(reqBody, reqHeader)
-                console.log(result);
-                if (result.status == 200) {
-                    toast.success("User Profile Updated Successfully")
-                }
-                else if (result.status == 400) {
-                    toast.warning(result.response.data)
-                }
-                else {
-                    toast.error("Error in updating profile")
-                }
-            } catch (error) {
-                console.log(error);
-
-            }
+        if (!username || !password || !confirmPassword || !bio) {
+            toast.info("Fill all the required fields")
         }
         else {
-            toast.info("Password do not match")
+            if (password === confirmPassword) {
+
+                //reqHeader
+                const reqHeader = {
+                    "Authorization": `Bearer ${token}`
+                }
+                const reqBody = new FormData() //bcz of req.file only work if u send form data
+                if (preview) {
+                    for (let key in userDetails) {
+                        reqBody.append(key, userDetails[key]) //append everthyng in userdetails
+                    }
+
+                    try {
+                        const result = await editProfileAPI(reqBody, reqHeader)
+                        console.log(result);
+
+                        sessionStorage.setItem("exisitingUser", JSON.stringify(result.data))
+
+                        if (result.status == 200) {
+                            toast.success("User Profile Updated Successfully")
+                            setOffCanvas(false)
+                            setUpdateProfileStatus(result)
+                        }
+                        else if (result.status == 400) {
+                            toast.warning(result.response.data)
+                        }
+                        else {
+                            toast.error("Error in updating profile")
+                        }
+                    } catch (error) {
+                        console.log(error);
+
+                    }
+
+                }
+                else {
+                    const result = await editProfileAPI({ username, password, bio, profile: existingProfile }, reqHeader)
+                    console.log(result);
+
+                    sessionStorage.setItem("exisitingUser", JSON.stringify(result.data))
+
+                    if (result.status == 200) {
+                        toast.success("User Profile Updated Successfully")
+                        setOffCanvas(false)
+                        setUpdateProfileStatus(result)
+                    }
+                    else if (result.status == 400) {
+                        toast.warning(result.response.data)
+                    }
+                    else {
+                        toast.error("Error in updating profile")
+                    }
+                }
+
+            }
+            else {
+                toast.info("Password do not match")
+            }
         }
     }
-
-
 
     useEffect(() => {
         if (sessionStorage.getItem("token")) {
