@@ -13,8 +13,11 @@ function AdminBooks() {
   const [allUsers, setAllUsers] = useState([])
 
   const getAllBooks = async () => {
+    const reqHeader = {
+      'Authorization': `Bearer ${token}`
+    }
     try {
-      const result = await getAllAdminBooksAPI()
+      const result = await getAllAdminBooksAPI(reqHeader)
       console.log(result);
       if (result.status == 200) {
         setAllBooks(result.data)
@@ -26,8 +29,11 @@ function AdminBooks() {
 
   const updateBookStatus = async (id) => {
     console.log(id);
+    const reqHeader = {
+      'Authorization': `Bearer ${token}`
+    }
     try {
-      const result = await updateBookStatusAPI(id)
+      const result = await updateBookStatusAPI(id, reqHeader)
       console.log(result);
       getAllBooks()
     } catch (error) {
@@ -55,11 +61,17 @@ function AdminBooks() {
   }
 
   useEffect(() => {
-    getAllBooks()
     if (sessionStorage.getItem("token")) {
       setToken(sessionStorage.getItem("token"))
     }
-  },[])
+  }, [])
+
+  useEffect(() => {
+    if (token) {
+      getAllBooks()
+      getAllAdminUsers()
+    }
+  }, [token])
 
   return (
     <>
@@ -158,7 +170,7 @@ function AdminBooks() {
 
     </>
   )
-  
+
 }
 
 export default AdminBooks

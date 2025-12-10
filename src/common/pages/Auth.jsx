@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { FaCircleUser } from 'react-icons/fa6'
 import { Link, useNavigate } from 'react-router-dom'
-import { loginAPI, registerAPI } from '../../services/allAPI'
+import { googleLoginAPI, loginAPI, registerAPI } from '../../services/allAPI'
 import { toast } from 'react-toastify'
+import { GoogleLogin } from '@react-oauth/google'
+import { jwtDecode } from 'jwt-decode'
 
 function Auth({ register }) {
 
@@ -102,7 +104,43 @@ function Auth({ register }) {
     }
   }
 
+  //google-login
+  const handleGoogleLogin = async (credentialResponse) => {
+    console.log(credentialResponse.credential);
+    const googleData = jwtDecode(credentialResponse.credential)
+    console.log(googleData);
+    try {
+      const result = await googleLoginAPI({ username: googleData.name, password: "googlepassword", profile: googleData.picture, email: googleData.email })
+      console.log(result);
+      if (result.status == 200) {
+        if (result.status == 200) {
+          sessionStorage.setItem("exisitingUser", JSON.stringify(result.data.exisitingUser))
+          sessionStorage.setItem("token", result.data.token)
+          toast.success("Login Successfully")
+          if (result.data.exisitingUser.role == "admin") {
+            navigate('/adminHome')
+          }
+          else {
+            navigate('/')
+          }
+          setUserDetails({
+            email: "",
+            password: ""
+          })
+        }
+        else {
+          toast.error("Something went wrong")
+          setUserDetails({
+            email: "",
+            password: ""
+          })
+        }
+      }
+    } catch (error) {
+      console.log(error);
 
+    }
+  }
 
 
   return (
@@ -145,6 +183,18 @@ function Auth({ register }) {
 
               <div>
                 {/* Google Authentication */}
+                {!register && <div className='mt-3'>
+                  <GoogleLogin
+                    onSuccess={credentialResponse => {
+                      console.log(credentialResponse);
+                      handleGoogleLogin(credentialResponse)
+                    }}
+                    onError={() => {
+                      console.log('Login Failed');
+                    }}
+                  />
+
+                </div>}
               </div>
 
               <div className='mt-3'>

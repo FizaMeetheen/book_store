@@ -4,6 +4,7 @@ import { FaXTwitter } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
 import { Link } from 'react-router-dom'
 import { userProfileUpdate } from '../../context/ContextShare'
+import serverURL from '../../services/serverURL'
 
 function Header() {
 
@@ -11,8 +12,11 @@ function Header() {
     const [dropdownStatus, setDropdownStatus] = useState(false)
     const [token, setToken] = useState("")
     const [username, setUsername] = useState("")
+    const [userProfile, setUserProfile] = useState("")
 
-    const {updateProfileStatus} = useContext(userProfileUpdate)
+    const { updateProfileStatus } = useContext(userProfileUpdate)
+
+    console.log(userProfile);
 
 
     useEffect(() => {
@@ -21,7 +25,9 @@ function Header() {
         }
         if (sessionStorage.getItem("exisitingUser")) {
             const name = JSON.parse(sessionStorage.getItem("exisitingUser"))
+            const profilePic = JSON.parse(sessionStorage.getItem("exisitingUser"))
             setUsername(name.username)
+            setUserProfile(profilePic.profile)
         }
     }, [updateProfileStatus])
 
@@ -49,13 +55,14 @@ function Header() {
                         :
                         <div className='relative inline-block text-left'>
                             <button onClick={() => setDropdownStatus(!dropdownStatus)} className='w-full flex items-center bg-white px-3 py-2 shadow-xl hover:bg-gray-100'>
-                                <img src="https://st.depositphotos.com/1537427/3571/v/450/depositphotos_35716051-stock-illustration-user-icon-vector.jpg" alt="Profile Pic"
+                                <img src={userProfile == "" ? "https://st.depositphotos.com/1537427/3571/v/450/depositphotos_35716051-stock-illustration-user-icon-vector.jpg"
+                                    : userProfile.startsWith("http") ? userProfile : `${serverURL}/imguploads/${userProfile}`} alt="Profile Pic"
                                     width={"50px"} height={"50px"} style={{ borderRadius: "50%" }} />
                                 <p className='ms-2'>{username}</p>
                             </button>
                             {dropdownStatus && <div className='absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg'>
                                 <Link to={'/profile'} className='block px-4 py-2 text-sm text-gray-700'>Profile</Link>
-                               <Link to={"/login"}> <button className='block px-4 py-2 text-sm text-gray-700'>Logout</button></Link>
+                                <Link to={"/login"}> <button className='block px-4 py-2 text-sm text-gray-700'>Logout</button></Link>
                             </div>}
                         </div>}
                 </div>
