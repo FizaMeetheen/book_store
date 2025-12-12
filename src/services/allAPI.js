@@ -59,6 +59,11 @@ export const editProfileAPI = async(reqBody,reqHeader) => {
     return await commonAPI("PUT",`${serverURL}/edit-profile`,reqBody,reqHeader)
 }
 
+//make-payment
+export const makePaymentAPI = async(reqBody,reqHeader) => {
+    return await commonAPI("PUT",`${serverURL}/payment-mode`,reqBody,reqHeader)
+}
+
 //-------------admin--------------------------
 
 //get all-books in admin
@@ -80,5 +85,6 @@ export const getAllUsersAPI = async(reqHeader) => {
 export const updateAdminProfileAPI = async(reqBody,reqHeader) => {
     return await commonAPI("PUT",`${serverURL}/update-admin-profile`,reqBody,reqHeader)
 }
+
 
 

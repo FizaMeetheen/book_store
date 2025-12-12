@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FaFacebookSquare, FaInstagramSquare, FaRegUser } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { userProfileUpdate } from '../../context/ContextShare'
 import serverURL from '../../services/serverURL'
+import { userAuthContext } from '../../context/AuthContext'
 
 function Header() {
 
@@ -17,6 +18,18 @@ function Header() {
     const { updateProfileStatus } = useContext(userProfileUpdate)
 
     console.log(userProfile);
+
+    const {setAuthorisedUser} = useContext(userAuthContext)
+
+    const navigate = useNavigate()
+
+    const logout = () => {
+        sessionStorage.clear()
+        toast.success("logout Successfully")
+        setAuthorisedUser(false)
+        navigate("/")
+      }
+    
 
 
     useEffect(() => {
@@ -78,7 +91,7 @@ function Header() {
 
                     {/* Login */}
                     {!token ?
-                        <Link to="/login">
+                        <Link onClick={logout}>
                             <button className="flex items-center border border-white rounded px-3 py-2 ms-3 hover:bg-white hover:text-black">
                                 <FaRegUser className="me-2" />
                                 Login

@@ -6,6 +6,7 @@ import { addBookAPI, deleteUserAddedBookAPI, getBookStatusAPI, getPurchaseHistor
 import { toast } from 'react-toastify'
 import EditProfile from '../components/EditProfile'
 import { userProfileUpdate } from '../../context/ContextShare'
+import serverURL from '../../services/serverURL'
 
 function Profile() {
 
@@ -33,8 +34,9 @@ function Profile() {
   const [deleteBookStatus, setDeleteBookStatus] = useState(false)
   const [bookStatusDetails, setBookStatusDetails] = useState("")
   const [boughtBooks, setBoughtBooks] = useState("")
+  const [userProfile, setUserProfile] = useState("")
 
-  const {updateProfileStatus} = useContext(userProfileUpdate)
+  const { updateProfileStatus } = useContext(userProfileUpdate)
 
   const handleReset = () => {
     setBookDetails({
@@ -127,7 +129,9 @@ function Profile() {
     }
     if (sessionStorage.getItem("exisitingUser")) {
       const name = JSON.parse(sessionStorage.getItem("exisitingUser"))
+      const profilePic = JSON.parse(sessionStorage.getItem("exisitingUser"))
       setUsername(name.username)
+      setUserProfile(profilePic.profile)
     }
   }, [updateProfileStatus])
 
@@ -184,19 +188,20 @@ function Profile() {
   }
 
   useEffect(() => {
-    if(!token) return;
+    if (!token) return;
     if (bookStatus == true) {
       handleUserBook()
     }
     getPurchaseHistory()
-  }, [token,bookStatus, deleteBookStatus, purchaseStatus])
+  }, [token, bookStatus, deleteBookStatus, purchaseStatus])
 
   return (
     <>
       <Header />
       <div style={{ height: "200px" }} className='bg-black'></div>
       <div style={{ width: "200px", height: "200px", borderRadius: "50%", marginLeft: "70px", marginTop: "-130px" }} className='bg-white p-3' >
-        <img width={"200px"} height={"200px"} style={{ borderRadius: "50%" }} src="https://st.depositphotos.com/1537427/3571/v/450/depositphotos_35716051-stock-illustration-user-icon-vector.jpg" alt="" />
+        <img width={"200px"} height={"200px"} style={{ borderRadius: "50%" }} src={userProfile == "" ? "https://st.depositphotos.com/1537427/3571/v/450/depositphotos_35716051-stock-illustration-user-icon-vector.jpg"
+          : userProfile.startsWith("http") ? userProfile : `${serverURL}/imguploads/${userProfile}`} alt="" />
       </div>
       <div className='md:flex justify-between px-20 mt-5'>
         <div className='flex justify-center items-center'>
@@ -204,7 +209,7 @@ function Profile() {
           <MdVerified className='text-blue-500 ms-3 text-xl' />
         </div>
         <div>
-          <EditProfile/>
+          <EditProfile />
         </div>
       </div>
       <p className='text-justify p-10'>Lorem ipsum dolor sit, amet consectetur adipisicing elit.

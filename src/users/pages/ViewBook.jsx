@@ -3,8 +3,9 @@ import Header from '../../common/components/Header'
 import Footer from '../../common/components/Footer'
 import { FaBackward, FaRegEye } from 'react-icons/fa'
 import { Link, useParams } from 'react-router-dom'
-import { getBookAPI } from '../../services/allAPI'
+import { getBookAPI, makePaymentAPI } from '../../services/allAPI'
 import serverURL from '../../services/serverURL'
+import {loadStripe} from '@stripe/stripe-js';
 
 function ViewBook() {
 
@@ -26,6 +27,27 @@ function ViewBook() {
     } catch (error) {
       console.log(error);
 
+    }
+  }
+
+  const handlePurchase = async () => {
+    const stripe = await loadStripe('pk_test_51ScgS0IMPKPd4SixYTprNcdpRorAsMfNTlcazDu34IYvcTMx7PYFpyRjqTUvQiy0SLJe9QpOfSk4IekCcb6o3kIW00OMf32QO7');
+    console.log(stripe);
+    const token = sessionStorage.getItem("token")
+    if(token){
+      const reqHeader = {
+        "Authorization" : `Bearer ${token}`
+      }
+      try {
+        const result = await makePaymentAPI(bookDetails,reqHeader)
+        console.log(result);
+        const checkoutSessionUrl = result.data.checkoutSessionUrl
+        if(checkoutSessionUrl){
+          window.location.href = checkoutSessionUrl
+        }
+      } catch (error) {
+        console.log(error); 
+      }
     }
   }
 
@@ -62,7 +84,7 @@ function ViewBook() {
               <p className='text-justify mt-10'>{bookDetails?.abstract}</p>
               <div className='mt-10 flex justify-end'>
                 <Link to={'/allBooks'} className=' flex px-4 py-3 bg-blue-800  text-white hover:bg-white hover:text-blue-800 hover:border hover:border-blue-800 me-2 '><FaBackward className='mt-1 me-1' />Back</Link>
-                <button className='px-4 py-3 bg-green-800 text-white hover:bg-white hover:text-green-800 hover:border hover:border-green-800 '>Buy ₹</button>
+                <button onClick={handlePurchase} type='button' className='px-4 py-3 bg-green-800 text-white hover:bg-white hover:text-green-800 hover:border hover:border-green-800 '>Buy ₹</button>
               </div>
             </div>
 
